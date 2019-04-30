@@ -235,7 +235,7 @@ int recvFromFd(int connectionFd, char *buf, int size)
                 if (path[i] == '/' && i != len-1)
                     pathStartIndx = i;
             }
-            if (path[pathStartIndx] == '\')
+            if (path[pathStartIndx] == '\\')
                 pathStartIndx++;
             if (requestDataCMD('P', connectionFD, &dataConFD, servResp, path+pathStartIndx))
                 trasnferToConnection(dataConFD, path);
