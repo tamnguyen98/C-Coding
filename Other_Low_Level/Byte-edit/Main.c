@@ -19,8 +19,6 @@ int main (int argc, char **argv) {
         return 1;
     }
 
-    FILE *file = fopen(fileName, "r+");
-    int offset = 0;
     // check which format user input
     if (!isValidHex(argv[1])) {
         fprintf(stderr, "Error: Invalid address. Example of valid: 0x560 or 560\n");
@@ -31,7 +29,8 @@ int main (int argc, char **argv) {
         return 1;
     } 
     
-    offset = hex2dec(argv[1]);
+    FILE *file = fopen(fileName, "r+");
+    int offset = hex2dec(argv[1]);
     char byte = (char)hex2dec(argv[2]);
 
     fseek(file, offset, SEEK_SET);
