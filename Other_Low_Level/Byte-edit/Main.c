@@ -9,10 +9,15 @@ int isValidHex (char *str);
 
 int main (int argc, char **argv) {
     if (argc < 3 || argc > 4) {
-        fprintf(stderr, "Run with the follow:\t./ProgramName <address> <1B machineCode>  [optional: file]\n");
+        fprintf(stderr, "Run with the follow:\t./ProgramName <address> <1B machineCode>  <file>\n");
         return 1;
     }
-    char *fileName = (argc == 4)? argv[3]:"./lab04";
+    char *fileName = "./lab04";
+    if (argc == 3)
+        printf("No file given, resorting to %s as default you can set a file name by:\n\t./ProgramName <address> <1B machineCode>  <file>\n", fileName);
+    else
+        fileName = argv[3];
+
     if (access(fileName, R_OK | W_OK)) {
         // Return 0 if success, so if fails to have access
         fprintf(stderr, "Error: Can't seem to access \"%s\", make sure the file exist and you have R/W permission for it.\n", fileName);
@@ -28,7 +33,7 @@ int main (int argc, char **argv) {
         fprintf(stderr, "Error: Invalid machine code. Please enter hex-value machine code.\n\tExample: 75 or 0x75\n");
         return 1;
     } 
-    
+
     FILE *file = fopen(fileName, "r+");
     int offset = hex2dec(argv[1]);
     char byte = (char)hex2dec(argv[2]);
@@ -36,8 +41,6 @@ int main (int argc, char **argv) {
     fseek(file, offset, SEEK_SET);
     printf("Writing %X to %X\n", byte, argv[1]);
     fwrite(&byte, 1, 1, file);
-    // fread(&byte, 1,1, file);
-    // printf("%d:%02X\n", offset, byte);
     fclose(file);
     return 0;
 }
