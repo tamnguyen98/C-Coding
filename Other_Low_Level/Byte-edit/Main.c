@@ -9,7 +9,7 @@ int isValidHex (char *str);
 
 int main (int argc, char **argv) {
     if (argc < 3 || argc > 4) {
-        fprintf(stderr, "Run with the follow:\t./ProgramName <address> <1B machineCode>  <file>\n");
+        fprintf(stderr, "Run with the follow:\t./ProgramName <address> <machineCode>  <file>\n");
         return 1;
     }
     char *fileName = "./lab04";
@@ -21,6 +21,11 @@ int main (int argc, char **argv) {
     if (access(fileName, R_OK | W_OK)) {
         // Return 0 if success, so if fails to have access
         fprintf(stderr, "Error: Can't seem to access \"%s\", make sure the file exist and you have R/W permission for it.\n", fileName);
+        return 1;
+    }
+
+    if (strlen(argv[2])%2 != 0) {
+        fprintf(stderr, "Error: Invalid machine code. There are two character per byte (length need to be even).\n");
         return 1;
     }
 
@@ -36,11 +41,15 @@ int main (int argc, char **argv) {
 
     FILE *file = fopen(fileName, "r+");
     int offset = hex2dec(argv[1]);
-    char byte = (char)hex2dec(argv[2]);
-
     fseek(file, offset, SEEK_SET);
-    printf("Writing %X to %X\n", byte, argv[1]);
-    fwrite(&byte, 1, 1, file);
+
+    // Write all the bytes (Assuming more than one byte is given)
+    for (int i = 1; i < strlen(argv[2]); i+=2) {
+        char code[2] = {argv[2][i-1], argv[2][i]};
+        char byte = (char)hex2dec(code);
+        printf("Writing %X to %X\n", byte, offset+i-1);
+        fwrite(&byte, 1, 1, file);
+    }
     fclose(file);
     return 0;
 }
